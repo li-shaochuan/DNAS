@@ -8,6 +8,8 @@ Authors
 Shaochuan Li, Pingping Sun, Yingwei Zhao, Ka-chun Wong, Xiangtao Li
 
 
-Contact
+Contact:
+
 lisc391@nenu.edu.cn
+
 lixt314@jlu.edu.cn (corresponding author)
