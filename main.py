@@ -61,7 +61,7 @@ def Ant(x,y,n_iterations,pop_size,n_best):
 
     for i in range (pop_size):
 
-        fit,model=cross_valadition(x,y,pop[i])
+        fit=cross_valadition(x,y,pop[i])
         fitness.append(fit)
         if fit>best_fitness:
             best_fitness=fit
@@ -72,7 +72,7 @@ def Ant(x,y,n_iterations,pop_size,n_best):
         ev_optim.spread_pheronome(pop,fitness)
         pop=ev_optim.gen_path()
         for ind in range (pop_size):
-            fit,model = cross_valadition(x, y, pop[ind])
+            fit = cross_valadition(x, y, pop[ind])
             fitness[ind]=fit
             ev_optim.local_updating_rule(pop[ind],fit)
             if fit > best_fitness:
@@ -94,18 +94,28 @@ def main():
                      , mode='r')
     y = h5.get('y')
     h5.close()
-    index=gene_selection(x,y)
-    x=x.iloc[:,index]
+    X_train, X_test, y_train, y_test=train_test_split(x,y,test_size=0.1,random_state=0)
+    index=gene_selection(X_train,y_train)
+    X_train=X_train.iloc[:,index]
+    X_test=X_test.iloc[:,index]
     one_hot = np.eye(4).tolist()
-    temp_y = list(np.array(y).squeeze())
-    y_one_hot = []
+    temp_y = list(np.array(y_train).squeeze())
+    y_one_hot_train = []
     for i in range(len(temp_y)):
         j = temp_y[i]
-        y_one_hot.append(one_hot[j])
+        y_one_hot_train.append(one_hot[j])
+    temp_y = list(np.array(y_test).squeeze())
+    y_one_hot_test = []
+    for i in range(len(temp_y)):
+        j = temp_y[i]
+        y_one_hot_train.append(y_one_hot_test[j])
 
-    fit, model= Ant(np.array(x),np.array(y), n_iterations, pop_size, n_best)
+    fit, model= Ant(np.array(X_train),np.array(y_one_hot_train), n_iterations, pop_size, n_best)
     print('final fitness:{}'.format(fit))
     print('best model:{}'.format(model))
+
+    acc,model=train(model, X_train, X_test, y_train, y_test)
+    print('test_acc:{}'.format(acc))
 if __name__ == "__main__":
     main()
 
